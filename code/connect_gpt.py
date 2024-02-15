@@ -2,18 +2,21 @@ import openai
 import numpy as np
 import pandas as pd
 
-openai.api_key = "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"
-model = "text-embedding-ada-002"
+# don't upload this key to github!!!
+openai.api_key = ""
 
-def cosine_similarity(vec_a, vec_b):
-    return np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b))
+# embedding model used: "text-embedding-ada-002"
 
-def embedding(token_list, model):
+def embedding(token_list):
+  model = "text-embedding-ada-002"
   embeddings = []
   for token in token_list:
     embedding = openai.Embedding.create(input=[token], model=model).data[0].embedding
     embeddings.append(embedding)
   return embeddings
+
+def cosine_similarity(vec_a, vec_b):
+    return np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b))
 
 def cosine_matrix(target, attribute):
   # Initialize a matrix to store cosine similarities
@@ -50,8 +53,8 @@ def weat_score(target_embeddings_1, target_embeddings_2, attribute_embeddings_1,
 targets = ['Engineer', 'Nurse', 'Teacher', 'Doctor', 'Carpenter', 'Driver','Entrepreneur']
 attributes = ['he', 'she', 'man', 'woman', 'mother', 'father', 'non-binary']
 
-target_embeddings = embedding(targets, model) 
-attribute_embeddings = embedding(attributes, model) 
+target_embeddings = embedding(targets) 
+attribute_embeddings = embedding(attributes) 
 
 print(cosine_matrix(target_embeddings, attribute_embeddings))
 
@@ -61,10 +64,10 @@ family_words = ['home', 'parents', 'children', 'family', 'cousins', 'marriage', 
 male_names = ['John', 'Paul', 'Mike', 'Kevin', 'Steve', 'Greg', 'Jeff']
 female_names = ['Amy', 'Emily', 'Lisa', 'Sarah', 'Diana', 'Kate', 'Anna']
 
-target_1 = embedding(career_words, model)
-target_2 = embedding(family_words, model)
-attribute_1 = embedding(male_names, model)
-attribute_2 = embedding(female_names, model)
+target_1 = embedding(career_words)
+target_2 = embedding(family_words)
+attribute_1 = embedding(male_names)
+attribute_2 = embedding(female_names)
 
 score, effect_size = weat_score(target_1, target_2, attribute_1, attribute_2)
 
@@ -72,10 +75,18 @@ print(f"WEAT Score: {score}, Effect Size: {effect_size}")
 
 
 
+######################################################################################
+# Still working on this part !!!
 
+fine_tuned_model_id = "gpt-3.5-turbo"
 
-# weat_score_result, effect_size = weat_score(target_embeddings_1, target_embeddings_2, attribute_embeddings_1, attribute_embeddings_2)
-# print(f"WEAT Score: {weat_score_result}, Effect Size: {effect_size}")
+def generate_response(prompt):
+    response = openai.Completion.create(
+        model=fine_tuned_model_id,  # Use your fine-tuned model
+        prompt=prompt,
+        max_tokens=50
+    )
+    return response.choices[0].text.strip()
 
 
 # response = openai.ChatCompletion.create(
@@ -84,6 +95,3 @@ print(f"WEAT Score: {score}, Effect Size: {effect_size}")
 #     {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
 #     {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
 #   ]
-# )
-
-
