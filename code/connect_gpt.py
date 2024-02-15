@@ -2,14 +2,17 @@ import openai
 import numpy as np
 import pandas as pd
 
-openai.api_key = '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'
+openai.api_key = "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"
 model = "text-embedding-ada-002"
 
 def cosine_similarity(vec_a, vec_b):
     return np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b))
 
-def embedding(text, model):
-  embeddings = openai.Embedding.create(input=[text], model=model).data[0].embedding
+def embedding(token_list, model):
+  embeddings = []
+  for token in token_list:
+    embedding = openai.Embedding.create(input=[token], model=model).data[0].embedding
+    embeddings.append(embedding)
   return embeddings
 
 def cosine_matrix(target, attribute):
@@ -43,14 +46,30 @@ def weat_score(target_embeddings_1, target_embeddings_2, attribute_embeddings_1,
     return weat_score, effect_size
 
 
-
+# Cosine similarity test case
 targets = ['Engineer', 'Nurse', 'Teacher', 'Doctor', 'Carpenter', 'Driver','Entrepreneur']
 attributes = ['he', 'she', 'man', 'woman', 'mother', 'father', 'non-binary']
 
-target_embeddings = [embedding(target, model) for target in targets]
-attribute_embeddings = [embedding(attribute, model) for attribute in attributes]
+target_embeddings = embedding(targets, model) 
+attribute_embeddings = embedding(attributes, model) 
 
 print(cosine_matrix(target_embeddings, attribute_embeddings))
+
+# WEAT test case
+career_words = ['executive', 'management', 'professional', 'corporation', 'salary', 'office', 'business']
+family_words = ['home', 'parents', 'children', 'family', 'cousins', 'marriage', 'wedding']
+male_names = ['John', 'Paul', 'Mike', 'Kevin', 'Steve', 'Greg', 'Jeff']
+female_names = ['Amy', 'Emily', 'Lisa', 'Sarah', 'Diana', 'Kate', 'Anna']
+
+target_1 = embedding(career_words, model)
+target_2 = embedding(family_words, model)
+attribute_1 = embedding(male_names, model)
+attribute_2 = embedding(female_names, model)
+
+score, effect_size = weat_score(target_1, target_2, attribute_1, attribute_2)
+
+print(f"WEAT Score: {score}, Effect Size: {effect_size}")
+
 
 
 
