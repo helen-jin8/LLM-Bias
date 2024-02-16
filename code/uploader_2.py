@@ -11,10 +11,14 @@ def save_file(filepath, content):
     with open(filepath, 'a', encoding='utf-8') as outfile:
         outfile.write(content)
 
-# Set the OpenAI API keys by reading them from files
-api_key = "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"
+############ Set up API Key ######################################
 
-openai.api_key = api_key
+api_key_file = '/Users/jinjiahui/Desktop/b-school lab/api_key.txt'
+
+with open(api_key_file, 'r') as file:
+    openai.api_key = file.readline().strip()
+
+#####################################################################
 
 # Using the provided file_id
 file_id = "file-beMUSEWTT1o3B05L5ebpmHiJ"
