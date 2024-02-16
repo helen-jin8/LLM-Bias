@@ -2,10 +2,21 @@ import openai
 import numpy as np
 import pandas as pd
 
-# don't upload this key to github!!!
-openai.api_key = ""
 
-# embedding model used: "text-embedding-ada-002"
+############ Set up API Key ######################################
+
+api_key_file = '/Users/jinjiahui/Desktop/b-school lab/api_key.txt'
+
+with open(api_key_file, 'r') as file:
+    openai.api_key = file.readline().strip()
+
+
+#####################################################################
+
+
+def read_api_key(file_path):
+    with open(file_path, 'r') as file:
+        return file.readline().strip()
 
 def embedding(token_list):
   model = "text-embedding-ada-002"
@@ -80,22 +91,22 @@ print(f"WEAT Score: {score}, Effect Size: {effect_size}")
 
 
 
-def generate_response(prompt):
+# def generate_response(prompt):
 
-      response = openai.Completion.create(
-          engine="text-davinci-003",  # Example: Use an appropriate model ID
-          prompt=prompt,
-          max_tokens=50,
-          temperature=0.7  # Adjust as needed
-        )
-      generated_text = response.choices[0].text.strip()
-      generated_embedding = embedding([generated_text])[0]  # Assuming embedding function handles list input
-      return generated_text, generated_embedding
+#       response = openai.Completion.create(
+#           engine="text-davinci-003",  # Example: Use an appropriate model ID
+#           prompt=prompt,
+#           max_tokens=50,
+#           temperature=0.7  # Adjust as needed
+#         )
+#       generated_text = response.choices[0].text.strip()
+#       generated_embedding = embedding([generated_text])[0]  # Assuming embedding function handles list input
+#       return generated_text, generated_embedding
 
-prompt = "Describe a profession that combines creativity and technology."
-generated_text, generated_embedding = generate_response(prompt)
+# prompt = "Describe a profession that combines creativity and technology."
+# generated_text, generated_embedding = generate_response(prompt)
 
-print(f"Generated Text: {generated_text}")
+# print(f"Generated Text: {generated_text}")
 
 
 
