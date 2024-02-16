@@ -76,22 +76,26 @@ print(f"WEAT Score: {score}, Effect Size: {effect_size}")
 
 
 ######################################################################################
-# Still working on this part !!!
+# FINE TUNNING PART (still working on)
 
-fine_tuned_model_id = "gpt-3.5-turbo"
+
 
 def generate_response(prompt):
-    response = openai.Completion.create(
-        model=fine_tuned_model_id,  # Use your fine-tuned model
-        prompt=prompt,
-        max_tokens=50
-    )
-    return response.choices[0].text.strip()
+
+      response = openai.Completion.create(
+          engine="text-davinci-003",  # Example: Use an appropriate model ID
+          prompt=prompt,
+          max_tokens=50,
+          temperature=0.7  # Adjust as needed
+        )
+      generated_text = response.choices[0].text.strip()
+      generated_embedding = embedding([generated_text])[0]  # Assuming embedding function handles list input
+      return generated_text, generated_embedding
+
+prompt = "Describe a profession that combines creativity and technology."
+generated_text, generated_embedding = generate_response(prompt)
+
+print(f"Generated Text: {generated_text}")
 
 
-# response = openai.ChatCompletion.create(
-#   model="gpt-3.5-turbo",
-#   messages=[
-#     {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
-#     {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
-#   ]
+
